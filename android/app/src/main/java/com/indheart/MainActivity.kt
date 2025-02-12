@@ -3,6 +3,10 @@ package com.indheart
 import android.os.Build
 import android.os.Bundle
 
+import android.content.Context
+import android.app.NotificationManager
+import androidx.core.app.NotificationCompat
+
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
@@ -57,18 +61,17 @@ class MainActivity : ReactActivity() {
       // Use the default back button implementation on Android S
       // because it's doing more than [Activity.moveTaskToBack] in fact.
       super.invokeDefaultOnBackPressed()
+  } // Add this closing brace
 
+  fun setBadge(context: Context, count: Int) {
+      val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+      val notification = NotificationCompat.Builder(context, "default")
+          .setContentTitle("New Notifications")
+          .setContentText("You have $count unread notifications.")
+          .setSmallIcon(R.drawable.rn_edit_text_material)  // Replace with your app's notification icon
+          .setNumber(count)  // Set the badge count
+          .build()
 
-fun setBadge(context: Context, count: Int) {
-    val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-    val notification = NotificationCompat.Builder(context, "default")
-        .setContentTitle("New Notifications")
-        .setContentText("You have $count unread notifications.")
-        .setSmallIcon(R.drawable.rn_edit_text_material)  // Replace with your app's notification icon
-        .setNumber(count)  // Set the badge count
-        .build()
-
-    notificationManager.notify(0, notification)
-
+      notificationManager.notify(0, notification)
   }
 }

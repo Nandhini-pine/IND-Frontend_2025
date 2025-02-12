@@ -39,9 +39,6 @@ type PatientDashboardPageNavigationProp = StackNavigationProp<
 
 interface PatientDetails {
   emergency_doctor_number: string;
-}
-
-interface PatientDetails {
   patient_id: string; // Ensure this is defined
   diet: string;
 }
@@ -102,7 +99,7 @@ const PatientDashboardPage: React.FC = () => {
             patientDetails.patient_id
           );
           const response = await axios.get(
-            `https://indheart.pinesphere.in/patient/patient/${patientDetails.patient_id}/notification-count/`
+            `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/patient/${patientDetails.patient_id}/notification-count/`
           );
           console.log("Notification count response:", response.data); // Log the response for debugging
           setNotificationCount(response.data.notification_count); // Use notification_count from response
@@ -182,33 +179,33 @@ const PatientDashboardPage: React.FC = () => {
   const fetchPatientDetails = async (phone: string) => {
     try {
       const response = await axios.get(
-        `https://indheart.pinesphere.in/patient/patient/${phone}/`
+        `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/patient/${phone}/`
       );
       setPatientDetails(response.data);
 
       // Fetch the actual token from AsyncStorage
       const token = await AsyncStorage.getItem('authToken');
       
-      // Run the additional API to save token and patient name
+      // Run the additional API to save token, patient name, and group name
       if (token) {
-        await axios.post('https://ntt4m9hq-8000.inc1.devtunnels.ms/patient/api/save-token/', {
+        await axios.post('https://vs3k4b04-8000.inc1.devtunnels.ms/patient/api/save-token/', {
           patient_id: response.data.patient_id,
           token: token,
-          patient_name: response.data.patient_name, // Assuming patient_name is part of the response
+          group_name: 'Patient', // Set group_name to 'Patient'
         });
       } else {
         console.error("Token not found in AsyncStorage");
       }
-        } catch (error) {
+    } catch (error) {
       console.error("Error fetching patient details:", error);
-        }
-      };
+    }
+  };
 
   const checkSleepData = async () => {
     if (patientDetails) {
       try {
         const response = await axios.get(
-          `https://indheart.pinesphere.in/patient/patient/${patientDetails.patient_id}/sleep-data/`
+          `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/patient/${patientDetails.patient_id}/sleep-data/`
         );
         setHasSleepData(response.data.exists);
       } catch (error) {
@@ -225,7 +222,7 @@ const PatientDashboardPage: React.FC = () => {
     if (patientDetails) {
       try {
         const response = await axios.get(
-          `https://indheart.pinesphere.in/patient/patient/${patientDetails.patient_id}/vegdiet-data/`
+          `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/patient/${patientDetails.patient_id}/vegdiet-data/`
         );
         setHasvegDietData(response.data.exists);
       } catch (error) {
@@ -241,7 +238,7 @@ const PatientDashboardPage: React.FC = () => {
     if (patientDetails) {
       try {
         const response = await axios.get(
-          `https://indheart.pinesphere.in/patient/patient/${patientDetails.patient_id}/nonvegdiet-data/`
+          `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/patient/${patientDetails.patient_id}/nonvegdiet-data/`
         );
         setHasnonvegDietData(response.data.exists);
       } catch (error) {
@@ -257,7 +254,7 @@ const PatientDashboardPage: React.FC = () => {
     if (patientDetails) {
       try {
         const response = await axios.get(
-          `https://indheart.pinesphere.in/patient/patient/${patientDetails.patient_id}/water-data/`
+          `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/patient/${patientDetails.patient_id}/water-data/`
         );
         setWaterIntake(response.data.exists);
       } catch (error) {
@@ -274,7 +271,7 @@ const PatientDashboardPage: React.FC = () => {
     if (patientDetails) {
       try {
         const response = await axios.get(
-          `https://indheart.pinesphere.in/patient/patient/${patientDetails.patient_id}/daily-exercise-data/`
+          `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/patient/${patientDetails.patient_id}/daily-exercise-data/`
         );
         setExerciseData(response.data.exists);
       } catch (error) {
@@ -291,7 +288,7 @@ const PatientDashboardPage: React.FC = () => {
     if (patientDetails) {
       try {
         const response = await axios.get(
-          `https://indheart.pinesphere.in/patient/patient/${patientDetails.patient_id}/walking-data/`
+          `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/patient/${patientDetails.patient_id}/walking-data/`
         );
         setWalkingData(response.data.exists);
       } catch (error) {
@@ -308,7 +305,7 @@ const PatientDashboardPage: React.FC = () => {
     if (patientDetails) {
       try {
         const response = await axios.get(
-          `https://indheart.pinesphere.in/patient/patient/${patientDetails.patient_id}/yoga-data/`
+          `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/patient/${patientDetails.patient_id}/yoga-data/`
         );
         setYogaData(response.data.exists);
       } catch (error) {
@@ -325,7 +322,7 @@ const PatientDashboardPage: React.FC = () => {
     if (patientDetails) {
       try {
         const response = await axios.get(
-          `https://indheart.pinesphere.in/patient/patient/${patientDetails.patient_id}/medicine-data/`
+          `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/patient/${patientDetails.patient_id}/medicine-data/`
         );
         setMedicineData(response.data.exists);
       } catch (error) {
@@ -342,7 +339,7 @@ const PatientDashboardPage: React.FC = () => {
     if (patientDetails) {
       try {
         const response = await axios.get(
-          `https://indheart.pinesphere.in/patient/patient/${patientDetails.patient_id}/lifestyle-data/`
+          `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/patient/${patientDetails.patient_id}/lifestyle-data/`
         );
         setLifestyleData(response.data.exists);
       } catch (error) {

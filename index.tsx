@@ -8,6 +8,7 @@ import { Text as RNText, TextProps } from "react-native";
 import firebase from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Custom Text component to disable font scaling globally
 const Text = (props: TextProps) => {
@@ -38,18 +39,10 @@ if (!firebase.apps.length) {
   requestUserPermission();
 }
 
-async function sendTokenToServer(token: string) {
-  try {
-    await axios.post('https://ntt4m9hq-8000.inc1.devtunnels.ms/patient/api/save-token/', { token });
-    console.log('Token sent to server successfully');
-  } catch (error) {
-    console.error('Error sending token to server:', error);
-  }
-}
 
 async function sendNotification(token: string, title: string, message: string) {
   try {
-    await axios.post('https://ntt4m9hq-8000.inc1.devtunnels.ms/patient/api/notify-user/', {
+    await axios.post('https://vs3k4b04-8000.inc1.devtunnels.ms/patient/api/notify-user/', {
       token,
       title,
       message
@@ -62,9 +55,9 @@ async function sendNotification(token: string, title: string, message: string) {
 
 messaging()
   .getToken()
-  .then(token => {
+  .then(async token => {
     console.log('FCM Token:', token);
-    sendTokenToServer(token);
+    await AsyncStorage.setItem('authToken', token); // Save token to AsyncStorage
     sendNotification(token, 'IND Title', 'IND Test');
   })
   .catch(error => {
@@ -80,8 +73,9 @@ async function requestUserPermission() {
   if (authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL) {
     messaging()
       .getToken()
-      .then(token => {
+      .then(async token => {
         console.log('FCM Token:', token);
+        await AsyncStorage.setItem('authToken', token); // Save token to AsyncStorage
       })
       .catch(error => {
         console.error('Error fetching FCM token:', error);
