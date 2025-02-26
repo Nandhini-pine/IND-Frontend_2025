@@ -52,6 +52,7 @@
     "react-native-gesture-handler": "~2.20.2",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-modal-datetime-picker": "^18.0.0",
+    "react-native-permissions": "^5.2.5",
     "react-native-progress": "^5.0.1",
     "react-native-pure-chart": "^0.0.24",
     "react-native-reanimated": "~3.16.1",

@@ -19,13 +19,24 @@ import { Button } from "react-native";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import CustomAlert from "../components/CustomAlert";
+import { PermissionsAndroid } from "react-native";
+import { Buffer } from "buffer";
 
 // Custom Text component to disable font scaling globally 
 const Text = (props: any) => { return <RNText {...props} allowFontScaling={false} />; };
 
 interface PatientDetails {
-  patient_id: string; // Ensure this is defined
-  diet: string;
+  [patient_id: string]: {
+    sleep: boolean;
+    veg: boolean;
+    nonveg: boolean;
+    water: boolean;
+    exercise: boolean;
+    medicine: boolean;
+    walk: boolean;
+    yoga: boolean;
+    lifestyle: boolean;
+  };
 }
 
 const PatientDailyLogScreen = () => {
@@ -57,23 +68,54 @@ const PatientDailyLogScreen = () => {
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertTitle, setAlertTitle] = useState('');
   const [alertMessage, setAlertMessage] = useState('');
+  const [loading, setLoading] = useState(true);
+
+useEffect(() => {
+  setLoading(true);
+  fetchDataForAllPatients(date).then(() => setLoading(false));
+}, [date, patientIds]);
+
 
 
   // Fetch all data functions here
-  const fetchDataForAllPatients = async () => {
-    await fetchSleepDataForAllPatients(date);
-    await fetchVegDataForAllPatients(date);
-    await fetchNonVegDataForAllPatients(date);
-    await fetchWaterDataForAllPatients(date);
-    await fetchExerciseDataForAllPatients(date);
-    await fetchWalkingDataForAllPatients(date);
-    await fetchYogaDataForAllPatients(date);
+  const fetchDataForAllPatients = async (selectedDate: Date) => {
+    const formattedDate = selectedDate.toISOString().split("T")[0];
+    const newData: Record<string, { sleep: boolean; veg: boolean; nonveg: boolean; water: boolean; exercise: boolean; medicine: boolean; walk: boolean; yoga: boolean; lifestyle: boolean }> = {};
+  
+    await Promise.all(
+      patientIds.map(async (patientId) => {
+        try {
+          const [sleep, veg, nonveg, water, exercise, medicine, walk, yoga, lifestyle] = await Promise.all([
+            axios.get(`https://indheart.pinesphere.in/patient/patient/${patientId}/all-sleep-data/${formattedDate}/`).then(res => res.data.exists).catch(() => false),
+            axios.get(`https://indheart.pinesphere.in/patient/patient/${patientId}/all-vegdiet-data/${formattedDate}/`).then(res => res.data.exists).catch(() => false),
+            axios.get(`https://indheart.pinesphere.in/patient/patient/${patientId}/all-nonvegdiet-data/${formattedDate}/`).then(res => res.data.exists).catch(() => false),
+            axios.get(`https://indheart.pinesphere.in/patient/patient/${patientId}/all-water-data/${formattedDate}`).then(res => res.data.exists).catch(() => false),
+            axios.get(`https://indheart.pinesphere.in/patient/patient/${patientId}/all-dailyexercise-data/${formattedDate}`).then(res => res.data.exists).catch(() => false),
+            axios.get(`https://indheart.pinesphere.in/patient/patient/${patientId}/all-medicine-data/${formattedDate}`).then(res => res.data.exists).catch(() => false),
+            axios.get(`https://indheart.pinesphere.in/patient/patient/${patientId}/all-walking-data/${formattedDate}`).then(res => res.data.exists).catch(() => false),
+            axios.get(`https://indheart.pinesphere.in/patient/patient/${patientId}/all-yoga-data/${formattedDate}`).then(res => res.data.exists).catch(() => false),
+            axios.get(`https://indheart.pinesphere.in/patient/patient/${patientId}/all-lifestyle-data/${formattedDate}`).then(res => res.data.exists).catch(() => false),
+          ]);
+  
+          newData[patientId] = { sleep, veg, nonveg, water, exercise, medicine, walk, yoga, lifestyle };
+        } catch (error) {
+          newData[patientId] = { sleep: false, veg: false, nonveg: false, water: false, exercise: false, medicine: false, walk: false, yoga: false, lifestyle: false };
+        }
+      })
+    );
+  
+    setPatientDetails(newData);
   };
+  
   const onClearFilter = () => {
     setSelectedPatientId("");
-    setDate(new Date()); // Reset date to the current date
-    fetchDataForAllPatients(); // Fetch all data again without filters
+    setDate(new Date()); 
   };
+  
+  useEffect(() => {
+    fetchDataForAllPatients(date);
+  }, [date]);
+  
 
   const onDateChange = (event: any, selectedDate?: Date) => {
     const currentDate = selectedDate || date;
@@ -107,58 +149,55 @@ const PatientDailyLogScreen = () => {
     fetchPatientIds();
   }, []);
 
+
+  
   const handleExportPatientDataDownload = async () => {
     try {
+      if (Platform.OS === "android") {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          {
+            title: "Storage Permission Required",
+            message:
+              "This app needs access to your storage to download the Excel file",
+            buttonNeutral: "Ask Me Later",
+            buttonNegative: "Cancel",
+            buttonPositive: "OK",
+          }
+        );
+  
+        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+          console.log("Storage permission denied");
+          setAlertTitle("Permission Denied");
+          setAlertMessage("Storage permission is required to download the file.");
+          return;
+        }
+      }
+  
       const response = await axios.get(
         "https://indheart.pinesphere.in/patient/export-patient-data/",
-        { responseType: "blob" } // Requesting blob data
+        { responseType: "arraybuffer" } // Use arraybuffer instead of blob
       );
-
-      // Check if the response data is valid
-      if (!response.data) {
-        throw new Error("No data returned from the server");
-      }
-
-      // Create a Blob from the response data
-      const blob = new Blob([response.data], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  
+      // Convert ArrayBuffer to Base64 string
+      const base64Data = Buffer.from(response.data, "binary").toString("base64");
+      const fileUri = FileSystem.documentDirectory + "exported_patient_data.xlsx";
+  
+      // Write the file
+      await FileSystem.writeAsStringAsync(fileUri, base64Data, {
+        encoding: FileSystem.EncodingType.Base64,
       });
-
-      // Create a FileReader to read the Blob
-      const reader = new FileReader();
-
-      reader.onloadend = async () => {
-        // Ensure the result is not null and is a string
-        if (reader.result && typeof reader.result === "string") {
-          const base64Data = reader.result.split(",")[1]; // Extract base64 part
-          const fileUri =
-            FileSystem.documentDirectory + "exported_patient_data.xlsx";
-
-          // Write the file as a Base64 encoded string
-          await FileSystem.writeAsStringAsync(fileUri, base64Data, {
-            encoding: FileSystem.EncodingType.Base64,
-          });
-
-          // Share the file
-          await Sharing.shareAsync(fileUri);
-          //("Download Successful", "Excel file has been downloaded.");
-          setAlertTitle("Download Successful");
-          setAlertMessage("Excel file has been downloaded.");
-        } else {
-          throw new Error("FileReader result is null or not a string");
-        }
-      };
-
-      reader.onerror = (event) => {
-        console.error("FileReader error:", event); // Log FileReader error
-        throw new Error("Failed to read the blob");
-      };
-
-      // Read the Blob as Data URL
-      reader.readAsDataURL(blob);
+  
+      // Log the file path for debugging
+      console.log("File saved to:", fileUri);
+  
+      // Share or open the file
+      await Sharing.shareAsync(fileUri);
+  
+      setAlertTitle("Download Successful");
+      setAlertMessage("Excel file has been downloaded.");
     } catch (error) {
       console.error("Failed to download Excel file:", error);
-      //Alert.alert("Error", "Failed to download Excel file.");
       setAlertTitle("Error");
       setAlertMessage("Failed to download Excel file.");
     }
@@ -414,23 +453,19 @@ const PatientDailyLogScreen = () => {
     fetchLifestyleForAllPatients(date); // Fetch data when the component mounts
   }, [patientIds]);
 
-  const filteredData = patientIds
-    .filter((patientId) => {
-      // Only include patients with the selected ID
-      return selectedPatientId ? patientId === selectedPatientId : true;
-    })
-    .map((patientId) => ({
-      patientId: patientId,
-      hasSleepData: sleepData[patientId] || false,
-      hasVegData: vegData[patientId] || false,
-      hasNonVegData: nonvegData[patientId] || false,
-      hasWaterData: waterData[patientId] || false,
-      hasExerciseData: exerciseData[patientId] || false,
-      hasWalkData: walkData[patientId] || false,
-      hasYogaData: yogaData[patientId] || false,
-      hasMedicineData: medicineData[patientId] || false,
-      hasLifestyleData: lifestyleData[patientId] || false,
-    }));
+  const filteredData = patientIds.map((patientId) => ({
+    patientId,
+    hasSleepData: patientDetails?.[patientId]?.sleep || false,
+    hasVegData: patientDetails?.[patientId]?.veg || false,
+    hasNonVegData: patientDetails?.[patientId]?.nonveg || false,
+    hasWaterData: patientDetails?.[patientId]?.water || false,
+    hasExerciseData: patientDetails?.[patientId]?.exercise || false,
+    hasWalkData: patientDetails?.[patientId]?.walk || false,
+    hasYogaData: patientDetails?.[patientId]?.yoga || false,
+    hasMedicineData: patientDetails?.[patientId]?.medicine || false,
+    hasLifestyleData: patientDetails?.[patientId]?.lifestyle || false,
+  }));
+  
 
   return (
     <View style={styles.container}>
@@ -554,7 +589,9 @@ const PatientDailyLogScreen = () => {
 
                 {/* Each Image will be wrapped in a View for better alignment */}
                 <View style={styles.imageContainer}>
-                  <Image
+                  <Image  
+                      key={row.hasSleepData.toString()} 
+
                     source={
                       row.hasSleepData
                         ? require("../../assets/images/check.png")
@@ -566,6 +603,8 @@ const PatientDailyLogScreen = () => {
 
                 <View style={styles.imageContainer}>
                   <Image
+                    key={row.hasVegData.toString()} 
+
                     source={
                       row.hasVegData
                         ? require("../../assets/images/check.png")
@@ -577,6 +616,7 @@ const PatientDailyLogScreen = () => {
 
                 <View style={styles.imageContainer}>
                   <Image
+                    key={row.hasNonVegData.toString()}
                     source={
                       row.hasNonVegData
                         ? require("../../assets/images/check.png")
@@ -588,6 +628,7 @@ const PatientDailyLogScreen = () => {
 
                 <View style={styles.imageContainer}>
                   <Image
+                    key={row.hasWaterData.toString()}
                     source={
                       row.hasWaterData
                         ? require("../../assets/images/check.png")
@@ -599,6 +640,7 @@ const PatientDailyLogScreen = () => {
 
                 <View style={styles.imageContainer}>
                   <Image
+                    key={row.hasExerciseData.toString()}
                     source={
                       row.hasExerciseData
                         ? require("../../assets/images/check.png")
@@ -610,6 +652,7 @@ const PatientDailyLogScreen = () => {
 
                 <View style={styles.imageContainer}>
                   <Image
+                    key={row.hasMedicineData.toString()}
                     source={
                       row.hasMedicineData
                         ? require("../../assets/images/check.png")
@@ -620,6 +663,7 @@ const PatientDailyLogScreen = () => {
                 </View>
                 <View style={styles.imageContainer}>
                   <Image
+                    key={row.hasWalkData.toString()}
                     source={
                       row.hasWalkData
                         ? require("../../assets/images/check.png")
@@ -631,6 +675,7 @@ const PatientDailyLogScreen = () => {
 
                 <View style={styles.imageContainer}>
                   <Image
+                    key={row.hasYogaData.toString()}
                     source={
                       row.hasYogaData
                         ? require("../../assets/images/check.png")
@@ -642,6 +687,7 @@ const PatientDailyLogScreen = () => {
 
                 <View style={styles.imageContainer}>
                   <Image
+                    key={row.hasLifestyleData.toString()}
                     source={
                       row.hasLifestyleData
                         ? require("../../assets/images/check.png")
