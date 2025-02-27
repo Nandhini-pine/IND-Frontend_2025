@@ -98,7 +98,7 @@ const LoginPage: React.FC = () => {
     }
   
     try {
-      const response = await fetch("https://indheart.pinesphere.in/api/send_otp/", {
+      const response = await fetch("https://vs3k4b04-8000.inc1.devtunnels.ms/api/send_otp/", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -177,7 +177,7 @@ const LoginPage: React.FC = () => {
     }
   
     try {
-      const response = await fetch("https://indheart.pinesphere.in/api/send_otp/", {
+      const response = await fetch("https://vs3k4b04-8000.inc1.devtunnels.ms/api/send_otp/", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -242,7 +242,7 @@ const LoginPage: React.FC = () => {
   const handleVerifyOtp = async () => {
     try {
       const response = await fetch(
-        "https://indheart.pinesphere.in/api/verify_otp/",
+        "https://vs3k4b04-8000.inc1.devtunnels.ms/api/verify_otp/",
         {
           method: "POST",
           headers: {
@@ -285,7 +285,7 @@ const LoginPage: React.FC = () => {
     console.log("handleResendOtp called");
 
     try {
-      const response = await fetch("https://indheart.pinesphere.in/api/send_otp/", {
+      const response = await fetch("https://vs3k4b04-8000.inc1.devtunnels.ms/api/send_otp/", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",

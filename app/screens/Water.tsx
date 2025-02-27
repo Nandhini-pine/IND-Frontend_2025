@@ -124,7 +124,7 @@ const WaterPage: React.FC = () => {
     try {
       console.log("Fetching patient details for phone:", phone);
       const response = await axios.get(
-        `https://indheart.pinesphere.in/patient/patient/${phone}/`
+        `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/patient/${phone}/`
       );
 
       // Set only patient_id and diet
@@ -245,7 +245,7 @@ const WaterPage: React.FC = () => {
 
     try {
       const response = await axios.post(
-        `https://indheart.pinesphere.in/patient/water-data/`,
+        `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/water-data/`,
         {
           patient_id: patientDetails?.patient_id,
           date: formattedDate,

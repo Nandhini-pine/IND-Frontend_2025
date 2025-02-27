@@ -51,7 +51,7 @@ const ActivitiesBottomMenu = () => {
   const fetchPatientDetails = async (phone: string) => {
     try {
       const response = await axios.get(
-        `https://indheart.pinesphere.in/patient/patient/${phone}/`
+        `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/patient/${phone}/`
       );
       setPatientDetails(response.data);
     } catch (error) {
@@ -72,7 +72,7 @@ const ActivitiesBottomMenu = () => {
       const fetchWalkingData = async () => {
         try {
           const date = getCurrentDate();
-          const url = `https://indheart.pinesphere.in/patient/patient/${patientDetails.patient_id}/week-walking-data/${date}/`;
+          const url = `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/patient/${patientDetails.patient_id}/week-walking-data/${date}/`;
           const response = await axios.get(url);
           const activities = response.data.walking_activities;
 
@@ -116,7 +116,7 @@ const ActivitiesBottomMenu = () => {
 
     try {
       const currentDate = getCurrentDate();
-      const url = `https://indheart.pinesphere.in/patient/patient/${patientDetails.patient_id}/week-medicine-data/${currentDate}/`;
+      const url = `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/patient/${patientDetails.patient_id}/week-medicine-data/${currentDate}/`;
       const response = await axios.get(url);
 
       const weekData = response.data.data; // Weekly medication status

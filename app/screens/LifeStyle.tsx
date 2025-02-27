@@ -124,7 +124,7 @@ const LifeStyleMonitoring: React.FC<WalkingProps> = ({ navigation }) => {
     try {
       console.log("Fetching patient details for phone:", phone);
       const response = await axios.get(
-        `https://indheart.pinesphere.in/patient/patient/${phone}/`
+        `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/patient/${phone}/`
       );
 
       // Set only patient_id and diet
@@ -278,7 +278,7 @@ const LifeStyleMonitoring: React.FC<WalkingProps> = ({ navigation }) => {
     try {
       // Make the POST request to your Django API
       const response = await axios.post(
-        "https://indheart.pinesphere.in/patient/lifestyle-data/",
+        "https://vs3k4b04-8000.inc1.devtunnels.ms/patient/lifestyle-data/",
         payload
       );
 

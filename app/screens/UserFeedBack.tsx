@@ -60,7 +60,7 @@ const UserFeedbackForm: React.FC = () => {
   const fetchPatientDetails = async (phone: string) => {
     try {
       const response = await axios.get(
-        `https://indheart.pinesphere.in/patient/patient/${phone}/`
+        `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/patient/${phone}/`
       );
       setPatientDetails({
         patient_id: response.data.patient_id,
@@ -77,7 +77,7 @@ const UserFeedbackForm: React.FC = () => {
     const currentDate = new Date().toISOString().split('T')[0]; // Format: 'YYYY-MM-DD'
   
     try {
-      const response = await axios.post(`https://indheart.pinesphere.in/patient/user-feedback-data/`, {
+      const response = await axios.post(`https://vs3k4b04-8000.inc1.devtunnels.ms/patient/user-feedback-data/`, {
         patient_id: patientDetails?.patient_id,
         feedback: feedback,
         rating: rating,
@@ -130,7 +130,7 @@ const UserFeedbackForm: React.FC = () => {
     const currentDate = new Date().toISOString().split('T')[0]; // Format: 'YYYY-MM-DD'
   
     try {
-      const response = await axios.post(`https://indheart.pinesphere.in/patient/user-feedback-data/`, {
+      const response = await axios.post(`https://vs3k4b04-8000.inc1.devtunnels.ms/patient/user-feedback-data/`, {
         patient_id: patientDetails?.patient_id,
         feedback: feedback,
         rating: rating,

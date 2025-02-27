@@ -57,7 +57,7 @@ const NotificationPage: React.FC = () => {
           ]);
         }
       } catch (error) {
-        console.error(`Error fetching ${dataType} data:`, error);
+        //console.error(`Error fetching ${dataType} data:`, error);
       }
     };
 

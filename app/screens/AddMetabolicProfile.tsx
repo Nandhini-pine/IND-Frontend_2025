@@ -95,7 +95,7 @@ const AddMetabolicProfilePage: React.FC = () => {
     const fetchPatientIDs = async () => {
       try {
         const response = await fetch(
-          "https://indheart.pinesphere.in/api/api/get-existing-patient-ids/"
+          "https://vs3k4b04-8000.inc1.devtunnels.ms/api/api/get-existing-patient-ids/"
         );
         const data = await response.json();
         const options = data.patient_ids.map((id: string) => ({
@@ -121,7 +121,7 @@ const AddMetabolicProfilePage: React.FC = () => {
     const fetchMetabolicData = async (patientID: string) => {
       try {
         const response = await fetch(
-          `https://indheart.pinesphere.in/api/api/metabolic-data/?patient_id=${patientID}`
+          `https://vs3k4b04-8000.inc1.devtunnels.ms/api/api/metabolic-data/?patient_id=${patientID}`
         );
         const data = await response.json();
 
