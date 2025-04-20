@@ -4,7 +4,7 @@ import axios from 'axios';
 //import { API_URL } from 'react-native-dotenv';
 import messaging from '@react-native-firebase/messaging'; // Ensure you have this import
 
-const API_BASE_URL = 'https://vs3k4b04-8000.inc1.devtunnels.ms/api/api';
+const API_BASE_URL = 'https://indheart.pinesphere.in/api/api';
 
 // Use environment variable for API base URL
 //const API_BASE_URL = process.env.API_URL || 'http://localhost:8000/api/api';  // Fallback for local dev

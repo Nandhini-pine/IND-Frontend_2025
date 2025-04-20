@@ -9,18 +9,17 @@ import {
   Image,
   Alert,
   Platform,
+  PermissionsAndroid,
   Modal,
 } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { RootStackParamList } from "../../type"; // Adjust path as needed
 import axios from "axios";
-import { MaterialCommunityIcons } from "@expo/vector-icons"; // Add this for Excel icon
 import Icon from "react-native-vector-icons/FontAwesome";
-import * as FileSystem from "expo-file-system";
-import * as Sharing from "expo-sharing";
+import RNFS from "react-native-fs";
+
 import CustomAlert from "../components/CustomAlert";
-import { PermissionsAndroid } from "react-native";
 
 // Custom Text component to disable font scaling globally
 const Text = (props: any) => {
@@ -54,6 +53,30 @@ const ViewPatientTablePage: React.FC = () => {
   const jumpAnimation = useRef(new Animated.Value(0)).current;
   const [menuVisible, setMenuVisible] = useState(false);
 
+   // ✅ Request Storage Permission (Android)
+  const requestStoragePermission = async () => {
+    if (Platform.OS !== "android") return true; // iOS doesn't need permissions
+
+    if (Platform.Version >= 30) {
+      console.log("✅ Android 11+ detected. Using Scoped Storage, no permission needed.");
+      return true;
+    }
+
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+        {
+          title: "Storage Permission",
+          message: "App needs access to storage to save Excel files.",
+          buttonPositive: "OK",
+        }
+      );
+      return granted === PermissionsAndroid.RESULTS.GRANTED;
+    } catch (err) {
+      console.warn("❌ Storage permission error:", err);
+      return false;
+    }
+  };
   useEffect(() => {
     console.log("Menu visible:", menuVisible); // Logs the value whenever it changes
   }, [menuVisible]); // Runs every time menuVisible changes
@@ -62,7 +85,7 @@ const ViewPatientTablePage: React.FC = () => {
     const fetchPatientProfiles = async () => {
       try {
         const response = await axios.get(
-          "https://vs3k4b04-8000.inc1.devtunnels.ms/api/api/patients/"
+          "https://indheart.pinesphere.in/api/api/patients/"
         ); // Adjust the URL to your API endpoint
 
         const sortedProfiles = response.data.sort(
@@ -119,48 +142,55 @@ const ViewPatientTablePage: React.FC = () => {
   };
 
 
-  const handleExcelDownload = async () => {
-    try {
-      const response = await fetch(
-        "https://vs3k4b04-8000.inc1.devtunnels.ms/api/patients/download/"
-      );
-  
-      if (!response.ok) {
-        throw new Error("Failed to download Excel file");
-      }
-  
-      const blob = await response.blob();
-      const base64Data = await blobToBase64(blob);
-      const base64DataWithoutPrefix = base64Data.replace(/^data:.*;base64,/, ''); // Remove the prefix
-      const fileUri = FileSystem.documentDirectory + "patients.xlsx";
-  
-      await FileSystem.writeAsStringAsync(fileUri, base64DataWithoutPrefix, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
-  
-      console.log("File saved to:", fileUri);
-  
-      await Sharing.shareAsync(fileUri);
-  
-      setAlertTitle("Download Successful");
-      setAlertMessage("Excel file has been downloaded.");
-    } catch (error) {
-      console.error("Failed to download Excel file:", error);
-      setAlertTitle("Error");
-      setAlertMessage("Failed to download Excel file.");
-    }
-  };
-  
+  // ✅ Convert Blob to Base64
   const blobToBase64 = (blob: Blob): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        resolve(reader.result as string);
-      };
+      reader.onloadend = () => resolve(reader.result?.toString().split(",")[1] ?? "");
       reader.onerror = reject;
       reader.readAsDataURL(blob);
     });
   };
+
+  const handleExcelDownload = async () => {
+    try {
+      console.log("=== Starting Excel download request ===");
+      const hasPermission = await requestStoragePermission();
+      if (!hasPermission) {
+        Alert.alert("Permission Denied", "Storage access is required to download files.");
+        return;
+      }
+  
+      const response = await fetch("https://indheart.pinesphere.in/api/patients/download/");
+      if (!response.ok) throw new Error(`Failed to download Excel file. Status: ${response.status}`);
+  
+      const blob = await response.blob();
+      const base64Data = await blobToBase64(blob);
+  
+      // ✅ Define the initial filename
+      const downloadsDir = RNFS.DownloadDirectoryPath;
+      let fileName = "patient_data.xlsx";
+      let fileUri = `${downloadsDir}/${fileName}`;
+      let counter = 1;
+  
+      // ✅ Check if file exists and rename accordingly
+      while (await RNFS.exists(fileUri)) {
+        fileName = `patient_data(${counter}).xlsx`;
+        fileUri = `${downloadsDir}/${fileName}`;
+        counter++;
+      }
+  
+      // ✅ Save the new file
+      await RNFS.writeFile(fileUri, base64Data, "base64");
+  
+      console.log(`✅ File saved at: ${fileUri}`);
+      Alert.alert("Download Successful", `Excel file saved as ${fileName} in Downloads.`);
+    } catch (error) {
+      console.error("❌ Download Error:", error instanceof Error ? error.message : String(error));
+      Alert.alert("Download Failed", `Error: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  };
+  
   
 
 
@@ -178,7 +208,7 @@ const ViewPatientTablePage: React.FC = () => {
           onPress: async () => {
             try {
               await axios.delete(
-                `https://vs3k4b04-8000.inc1.devtunnels.ms/api/api/patients/${patientID}/`
+                `https://indheart.pinesphere.in/api/api/patients/${patientID}/`
               ); // Adjust the URL to your API endpoint
               setPatientProfiles((prevProfiles) =>
                 prevProfiles.filter(
@@ -219,7 +249,7 @@ const ViewPatientTablePage: React.FC = () => {
           try {
             if (deletePatientID) {
               await axios.delete(
-                `https://vs3k4b04-8000.inc1.devtunnels.ms/api/api/patients/${deletePatientID}/`
+                `https://indheart.pinesphere.in/api/api/patients/${deletePatientID}/`
               ); // Adjust the URL to your API endpoint
               setPatientProfiles((prevProfiles) =>
                 prevProfiles.filter(

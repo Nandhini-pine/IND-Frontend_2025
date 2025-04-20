@@ -51,7 +51,7 @@ const AdminDashboardPage: React.FC = () => {
     const fetchMetrics = async () => {
       try {
         const response = await fetch(
-          "https://vs3k4b04-8000.inc1.devtunnels.ms/api/metrics/"
+          "https://indheart.pinesphere.in/api/metrics/"
         );
         const data = await response.json();
         setMetrics(data);

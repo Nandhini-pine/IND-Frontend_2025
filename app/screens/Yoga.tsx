@@ -119,7 +119,7 @@ const YogaPage: React.FC<WalkingProps> = ({ navigation }) => {
     try {
       console.log("Fetching patient details for phone:", phone);
       const response = await axios.get(
-        `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/patient/${phone}/`
+        `https://indheart.pinesphere.in/patient/patient/${phone}/`
       );
 
       // Set only patient_id and diet
@@ -157,7 +157,7 @@ const YogaPage: React.FC<WalkingProps> = ({ navigation }) => {
       console.log("Payload:", payload);
 
       const response = await axios.post(
-        "https://vs3k4b04-8000.inc1.devtunnels.ms/patient/yoga-data/",
+        "https://indheart.pinesphere.in/patient/yoga-data/",
         payload
       );
 
@@ -221,7 +221,7 @@ const YogaPage: React.FC<WalkingProps> = ({ navigation }) => {
       console.log("Payload:", payload);
 
       const response = await axios.post(
-        "https://vs3k4b04-8000.inc1.devtunnels.ms/patient/yoga-data/",
+        "https://indheart.pinesphere.in/patient/yoga-data/",
         payload
       );
 

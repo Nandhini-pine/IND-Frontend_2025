@@ -42,7 +42,7 @@ if (!firebase.apps.length) {
 
 async function sendNotification(token: string, title: string, message: string) {
   try {
-    await axios.post('https://vs3k4b04-8000.inc1.devtunnels.ms/patient/api/notify-user/', {
+    await axios.post('https://indheart.pinesphere.in/patient/api/notify-user/', {
       token,
       title,
       message

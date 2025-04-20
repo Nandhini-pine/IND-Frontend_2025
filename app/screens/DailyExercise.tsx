@@ -142,7 +142,7 @@ const DailyExercise: React.FC<DailyExerciseProps> = ({ navigation }) => {
   const fetchPatientDetails = async (phone: string) => {
     try {
       const response = await axios.get(
-        `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/patient/${phone}/`
+        `https://indheart.pinesphere.in/patient/patient/${phone}/`
       );
 
       // Set only patient_id and diet
@@ -229,7 +229,7 @@ const DailyExercise: React.FC<DailyExerciseProps> = ({ navigation }) => {
 
       try {
         const response = await axios.post(
-          "https://vs3k4b04-8000.inc1.devtunnels.ms/patient/daily-exercise-data/",
+          "https://indheart.pinesphere.in/patient/daily-exercise-data/",
           formData
         );
 

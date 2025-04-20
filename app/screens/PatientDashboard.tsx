@@ -99,7 +99,7 @@ const PatientDashboardPage: React.FC = () => {
             patientDetails.patient_id
           );
           const response = await axios.get(
-            `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/patient/${patientDetails.patient_id}/notification-count/`
+            `https://indheart.pinesphere.in/patient/patient/${patientDetails.patient_id}/notification-count/`
           );
           console.log("Notification count response:", response.data); // Log the response for debugging
           setNotificationCount(response.data.notification_count); // Use notification_count from response
@@ -180,7 +180,7 @@ const PatientDashboardPage: React.FC = () => {
   const fetchPatientDetails = async (phone: string) => {
     try {
       const response = await axios.get(
-        `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/patient/${phone}/`
+        `https://indheart.pinesphere.in/patient/patient/${phone}/`
       );
       setPatientDetails(response.data);
 
@@ -189,7 +189,7 @@ const PatientDashboardPage: React.FC = () => {
       
       // Run the additional API to save token, patient name, and group name
       if (token) {
-        await axios.post('https://vs3k4b04-8000.inc1.devtunnels.ms/patient/api/save-token/', {
+        await axios.post('https://indheart.pinesphere.in/patient/api/save-token/', {
           patient_id: response.data.patient_id,
           token: token,
           group_name: 'Patient', // Set group_name to 'Patient'
@@ -206,7 +206,7 @@ const PatientDashboardPage: React.FC = () => {
     if (patientDetails) {
       try {
         const response = await axios.get(
-          `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/patient/${patientDetails.patient_id}/sleep-data/`
+          `https://indheart.pinesphere.in/patient/patient/${patientDetails.patient_id}/sleep-data/`
         );
         setHasSleepData(response.data.exists);
       } catch (error) {
@@ -223,7 +223,7 @@ const PatientDashboardPage: React.FC = () => {
     if (phoneNumber && patientDetails?.diet !== "Non-Vegetarian") { 
       try {
         const response = await axios.get(
-          `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/patient/${phoneNumber}/vegdiet-data/`
+          `https://indheart.pinesphere.in/patient/patient/${phoneNumber}/vegdiet-data/`
         );
         setHasvegDietData(response.data.exists);
       } catch (error) {
@@ -241,7 +241,7 @@ const PatientDashboardPage: React.FC = () => {
     if (phoneNumber && patientDetails?.diet !== "Vegetarian") { 
       try {
         const response = await axios.get(
-          `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/patient/${phoneNumber}/nonvegdiet-data/`
+          `https://indheart.pinesphere.in/patient/patient/${phoneNumber}/nonvegdiet-data/`
         );
         setHasnonvegDietData(response.data.exists);
       } catch (error) {
@@ -258,7 +258,7 @@ const PatientDashboardPage: React.FC = () => {
     if (patientDetails) {
       try {
         const response = await axios.get(
-          `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/patient/${patientDetails.patient_id}/water-data/`
+          `https://indheart.pinesphere.in/patient/patient/${patientDetails.patient_id}/water-data/`
         );
         setWaterIntake(response.data.exists);
       } catch (error) {
@@ -275,7 +275,7 @@ const PatientDashboardPage: React.FC = () => {
     if (patientDetails) {
       try {
         const response = await axios.get(
-          `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/patient/${patientDetails.patient_id}/daily-exercise-data/`
+          `https://indheart.pinesphere.in/patient/patient/${patientDetails.patient_id}/daily-exercise-data/`
         );
         setExerciseData(response.data.exists);
       } catch (error) {
@@ -292,7 +292,7 @@ const PatientDashboardPage: React.FC = () => {
     if (patientDetails) {
       try {
         const response = await axios.get(
-          `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/patient/${patientDetails.patient_id}/walking-data/`
+          `https://indheart.pinesphere.in/patient/patient/${patientDetails.patient_id}/walking-data/`
         );
         setWalkingData(response.data.exists);
       } catch (error) {
@@ -309,7 +309,7 @@ const PatientDashboardPage: React.FC = () => {
     if (patientDetails) {
       try {
         const response = await axios.get(
-          `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/patient/${patientDetails.patient_id}/yoga-data/`
+          `https://indheart.pinesphere.in/patient/patient/${patientDetails.patient_id}/yoga-data/`
         );
         setYogaData(response.data.exists);
       } catch (error) {
@@ -326,7 +326,7 @@ const PatientDashboardPage: React.FC = () => {
     if (patientDetails) {
       try {
         const response = await axios.get(
-          `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/patient/${patientDetails.patient_id}/medicine-data/`
+          `https://indheart.pinesphere.in/patient/patient/${patientDetails.patient_id}/medicine-data/`
         );
         setMedicineData(response.data.exists);
       } catch (error) {
@@ -343,7 +343,7 @@ const PatientDashboardPage: React.FC = () => {
     if (patientDetails) {
       try {
         const response = await axios.get(
-          `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/patient/${patientDetails.patient_id}/lifestyle-data/`
+          `https://indheart.pinesphere.in/patient/patient/${patientDetails.patient_id}/lifestyle-data/`
         );
         setLifestyleData(response.data.exists);
       } catch (error) {

@@ -142,7 +142,7 @@ export default function MedicationManager() {
     try {
       console.log("Fetching patient details for phone:", phone);
       const response = await axios.get(
-        `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/patient/${phone}/`
+        `https://indheart.pinesphere.in/patient/patient/${phone}/`
       );
 
       // Set only patient_id and diet
@@ -162,7 +162,7 @@ export default function MedicationManager() {
     const fetchPatientIDs = async () => {
       try {
         const response = await fetch(
-          "https://vs3k4b04-8000.inc1.devtunnels.ms/api/api/get-existing-patient-ids/"
+          "https://indheart.pinesphere.in/api/api/get-existing-patient-ids/"
         );
         const data = await response.json();
         const options = data.patient_ids.map((id: string) => ({
@@ -209,7 +209,7 @@ export default function MedicationManager() {
     try {
       // Send a POST request to your Django backend to save the form data
       const response = await axios.post(
-        "https://vs3k4b04-8000.inc1.devtunnels.ms/api/api/medical-manager/", // Adjust the URL based on your actual endpoint
+        "https://indheart.pinesphere.in/api/api/medical-manager/", // Adjust the URL based on your actual endpoint
         formData,
         {
           headers: {

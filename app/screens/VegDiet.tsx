@@ -136,7 +136,7 @@ const VegDietPage: React.FC = () => {
     try {
       console.log("Fetching patient details for phone:", phone);
       const response = await axios.get(
-        `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/patient/${phone}/`
+        `https://indheart.pinesphere.in/patient/patient/${phone}/`
       );
 
       // Set only patient_id and diet
@@ -192,8 +192,8 @@ const VegDietPage: React.FC = () => {
   const handleYes = (index: number) => {
     setResponses((prevResponses) =>
       prevResponses.map((response, i) =>
-        i === index ? { ...response, yes: true } : response
-      )
+        i === index ? { ...response, yes: true, quantity: "" } : response
+  )
     );
   };
 
@@ -278,6 +278,7 @@ const VegDietPage: React.FC = () => {
         cooked_vegetables_quantity: responses[1].quantity || 0,
         fresh_salads_quantity: responses[2].quantity || 0,
         green_leafy_vegetables: responses[3].yes || false,
+        green_leafy_quantity: responses[3].quantity || 0, // Add this line
 
         guava_quantity: quantities.guava || 0,
         orange_quantity: quantities.orange || 0,
@@ -302,7 +303,7 @@ const VegDietPage: React.FC = () => {
 
       try {
         const response = await axios.post(
-          "https://vs3k4b04-8000.inc1.devtunnels.ms/patient/vegetarian-diets/",
+          "https://indheart.pinesphere.in/patient/vegetarian-diets/",
           requestData
         );
         console.log("Vegetarian diet saved successfully:", response.data);
@@ -531,9 +532,11 @@ const VegDietPage: React.FC = () => {
                       /> */}
                     </View>
                   )}
+                 
                 </View>
               </View>
             ))}
+            
 
             {/* Fruits Picker */}
 

@@ -71,7 +71,7 @@ const PatientProfile: React.FC = () => {
   const fetchPatientDetails = async (phone: string) => {
     try {
       const response = await axios.get(
-        `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/patient/${phone}/`
+        `https://indheart.pinesphere.in/patient/patient/${phone}/`
       );
       setPatientDetails(response.data);
     } catch (error) {

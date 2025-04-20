@@ -192,7 +192,7 @@ const Walking: React.FC<WalkingProps> = ({ navigation }) => {
   const fetchPatientDetails = async (phone: string) => {
     try {
       const response = await axios.get(
-        `https://vs3k4b04-8000.inc1.devtunnels.ms/patient/patient/${phone}/`
+        `https://indheart.pinesphere.in/patient/patient/${phone}/`
       );
 
       setPatientDetails({
@@ -203,7 +203,7 @@ const Walking: React.FC<WalkingProps> = ({ navigation }) => {
 
       // Fetch clinical data for the patient to get the date of operation
       const clinicalResponse = await axios.get(
-        `https://vs3k4b04-8000.inc1.devtunnels.ms/api/api/clinical-data/?patient_id=${response.data.patient_id}/`
+        `https://indheart.pinesphere.in/api/api/clinical-data/?patient_id=${response.data.patient_id}/`
       );
 
       // Assuming that you want the first record for simplicity
@@ -333,7 +333,7 @@ const Walking: React.FC<WalkingProps> = ({ navigation }) => {
 
     try {
       const response = await axios.post(
-        "https://vs3k4b04-8000.inc1.devtunnels.ms/patient/walking-data/",
+        "https://indheart.pinesphere.in/patient/walking-data/",
         {
           // Prepare data to send
           patient_id: patientDetails?.patient_id,

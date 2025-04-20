@@ -64,19 +64,40 @@ const DisclaimerPage: React.FC = () => {
     fetchPhoneNumber();
   }, []);
 
-  const handleProceed = () => {
+  const handleProceed = async () => {
     if (isChecked) {
-      if (role === "Admin") {
-        navigation.navigate("AdminDashboardPage"); // Navigate to Admin Dashboard
+      if (role === "Patient") {
+        try {
+          const response = await fetch("https://indheart.pinesphere.in/api/api/mark_first_time_login_false/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ phone_number: phoneNumber }),
+          });
+  
+          const data = await response.json();
+          console.log("API Response:", data);
+  
+          if (data.status === "success") {
+            navigation.navigate("PatientDashboardPage");
+          } else {
+            Alert.alert("Error", data.message);
+          }
+        } catch (error) {
+          console.error("API Error:", error);
+          Alert.alert("Error", "Failed to update first time login status.");
+        }
       } else {
-        navigation.navigate("PatientDashboardPage"); // Navigate to Patient Dashboard
+        navigation.navigate("AdminDashboardPage");
       }
     } else {
-      //Alert.alert("Please acknowledge the disclaimer by checking the box."); // Show alert if not checked
       setAlertTitle("Disclaimer");
       setAlertMessage("Please acknowledge the disclaimer by checking the box.");
+      setAlertVisible(true);
     }
   };
+  
 
   return (
     <SafeAreaProvider>
